@@ -3,6 +3,7 @@ import logging
 import re
 
 import requests
+from security import safe_requests
 
 
 class TokenChecker:
@@ -76,7 +77,7 @@ class TokenChecker:
     def get_contracts_for_chain(chain_slug):
         logging.info(f"INFO: getting all the contracts from coinpaprika for chain: {chain_slug}...")
         try:
-            resp = requests.get(f"https://api.coinpaprika.com/v1/contracts/{chain_slug}")
+            resp = safe_requests.get(f"https://api.coinpaprika.com/v1/contracts/{chain_slug}")
             resp.raise_for_status()
             result = {e["address"].lower(): e for e in resp.json()}
             logging.info(f"INFO: retrieved {len(result)} contracts")
