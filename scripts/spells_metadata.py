@@ -4,6 +4,7 @@ import json
 import os
 import requests
 import yaml
+from security import safe_command
 
 def get_starting_line(filename):
     with open(filename, 'r') as file:
@@ -15,21 +16,21 @@ def get_starting_line(filename):
 def get_authors_loc(filename, starting_line):
     # get authors in git blame and omit config block
     cmd = ['git', 'blame', '--line-porcelain', filename, '-L', f'{starting_line}']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     return [line[7:] for line in stdout.decode('utf-8').split('\n') if line.startswith('author ')]
 
 def get_authors_commit_spellbook():
     # return list of all authors who have committed to the whole project
     cmd = ['git', 'log', '--format=%an']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     return [line for line in stdout.decode('utf-8').split('\n') if line]
 
 def get_authors_commit(filename):
     # return list of all authors who have committed to this file
     cmd = ['git', 'log', '--format=%an', filename]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     return [line for line in stdout.decode('utf-8').split('\n') if line]
 
@@ -37,7 +38,7 @@ def get_all_commits():
     # return list of all commits
     # git log --pretty=format:commit,%at,%an --name-only
     cmd = ['git', 'log', '--pretty=format:commit,%h,%at,%an', '--name-only']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     csv_string = "hash,timestamp,author,filename\n"
     for line in stdout.decode('utf-8').split('\n'):
@@ -53,7 +54,7 @@ def get_all_commits_stats():
     # return list of all commits
     # git log --pretty=format:commit,%at,%an -p 
     cmd = ['git', 'log', '--pretty=format:commit,%h,%at,%an', '--numstat']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     csv_string = "hash,timestamp,author,filename,lines_added,lines_removed\n"
     for line in stdout.decode('utf-8').split('\n'):
