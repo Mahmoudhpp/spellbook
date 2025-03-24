@@ -64,7 +64,7 @@ class TokenChecker:
     def get_tokens():
         logging.info(f"INFO: getting all the coins from coinpaprika...")
         try:
-            resp = requests.get("https://api.coinpaprika.com/v1/coins")
+            resp = requests.get("https://api.coinpaprika.com/v1/coins", timeout=60)
             resp.raise_for_status()
             result = {e["id"]: e for e in resp.json()}
             logging.info(f"INFO: retrieved {len(result)} coins")
@@ -76,7 +76,7 @@ class TokenChecker:
     def get_contracts_for_chain(chain_slug):
         logging.info(f"INFO: getting all the contracts from coinpaprika for chain: {chain_slug}...")
         try:
-            resp = requests.get(f"https://api.coinpaprika.com/v1/contracts/{chain_slug}")
+            resp = requests.get(f"https://api.coinpaprika.com/v1/contracts/{chain_slug}", timeout=60)
             resp.raise_for_status()
             result = {e["address"].lower(): e for e in resp.json()}
             logging.info(f"INFO: retrieved {len(result)} contracts")
