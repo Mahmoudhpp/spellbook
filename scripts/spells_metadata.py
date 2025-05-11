@@ -77,7 +77,7 @@ def get_projects_and_sectors():
             if file.endswith(".yml"):
                 # open yaml file and get project and sector
                 with open(os.path.join(root, file), "r") as f:
-                    data = yaml.load(f, Loader=yaml.FullLoader)
+                    data = yaml.load(f, Loader=yaml.SafeLoader)
                     if "models" in data:
                         for model in data["models"]:
                             model_name = (model["name"])
