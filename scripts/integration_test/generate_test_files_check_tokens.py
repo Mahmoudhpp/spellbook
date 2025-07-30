@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 from string import Template
+from security import safe_command
 
 
 def get_all_pages(endpoint_slug):
@@ -51,7 +52,7 @@ class TestPRs():
 
             # Get diff file
             cmd = diff_command.substitute(BASE_SHA=shas['base'], HEAD_SHA=shas['head'])
-            res = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode("utf-8")
+            res = safe_command.run(subprocess.run, cmd, capture_output=True, shell=True).stdout.decode("utf-8")
             if res != '':
                 print('hit')
                 write_command = diff_file_command.substitute(BASE_SHA=shas['base'], HEAD_SHA=shas['head'], FILE=f"test_diffs_tokens/new_lines_{i}.txt")
